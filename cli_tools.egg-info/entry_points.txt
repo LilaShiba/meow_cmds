@@ -1,0 +1,5 @@
+[console_scripts]
+neo = neo:main
+sky = sky:main
+weather = weather:main
+wut = define:main

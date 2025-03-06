@@ -1,0 +1,28 @@
+# Ignore .env files to keep sensitive data secure
+.env
+
+# Ignore data science files (adjust the file name if necessary)
+dsfile
+
+# Ignore other common files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environment folders
+venv/
+env/
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+
+# Ignore other platform-specific files
+.DS_Store
+Thumbs.db
