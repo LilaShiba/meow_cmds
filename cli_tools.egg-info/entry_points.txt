@@ -2,4 +2,5 @@
 neo = neo:main
 sky = sky:main
 weather = weather:main
+weather_log = weather_logger:main
 wut = define:main

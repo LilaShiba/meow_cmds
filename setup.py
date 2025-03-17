@@ -12,7 +12,8 @@ setup(
             'weather = weather:main',
             'neo = neo:main',
             'wut = define:main',
-            'sky = sky:main'
+            'sky = sky:main',
+            'weather_log = weather_logger:main'
         ],
     },
 )

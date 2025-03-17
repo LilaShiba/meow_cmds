@@ -44,6 +44,7 @@ def fetch_weather(station):
         print(f"💧  Humidity: {data.get('relativeHumidity', {}).get('value', 'N/A')}%")
         print(f"⚖️   Pressure: {data.get('barometricPressure', {}).get('value', 'N/A')} Pa")
         print("\n🌟 Stay magical! 🌟\n")
+        return data
 
     except Exception as e:
         print(f"❌ Error fetching weather data: {e}")
