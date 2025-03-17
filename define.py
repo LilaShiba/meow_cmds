@@ -4,59 +4,91 @@ import os
 from dotenv import load_dotenv
 
 # Load API credentials from .env file
-#load_dotenv()
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
-# Fetch API credentials from the environment
 API_KEY = os.getenv('DICT_API')
-
-# Check if the API_KEY is loaded correctly
 if not API_KEY:
-    print("❌ Error: API key not found. Please check your .env file.")
+    print("API key not found. Please check your .env file.")
     sys.exit(1)
 
-# Merriam-Webster API endpoint
-MW_API_URL = "https://www.dictionaryapi.com/api/v3/references/sd3/json/"
+MW_API_URL = "https://www.dictionaryapi.com/api/v3/references/collegiate/json/"
 
 def get_definition(word):
-    """Fetch word definition from Merriam-Webster API."""
     url = f"{MW_API_URL}{word.lower()}?key={API_KEY}"
-    print(f"✨🌙 Looking up the word: {word}... 🌙✨")
-    
-    # Make the request to the Merriam-Webster API
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Raise an error for bad responses
-        print(f"Response Status Code: {response.status_code}")
-
-        # Check if the response is valid JSON
+        response.raise_for_status()
         data = response.json()
-        if isinstance(data, list) and len(data) > 0:
-            word_data = data[0]  # Use the first definition set
-            if 'shortdef' in word_data:
-                print(f"\n✨🌙 Definitions for '{word}': 🌙✨")
-                for i, definition in enumerate(word_data['shortdef'], 1):
-                    print(f"{i}. {definition}")
-            else:
-                print("❌ No short definitions found.")
-        else:
-            print("❌ No definitions found.")
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Error: {e}")
+    except Exception as e:
+        print("Error fetching data:", e)
         sys.exit(1)
-    except ValueError as e:
-        print(f"❌ Error: Could not decode JSON response. The API might be down or the response is malformed.")
+
+    # Find first valid entry with a 'meta' key
+    entry = None
+    for item in data:
+        if isinstance(item, dict) and 'meta' in item:
+            entry = item
+            break
+    if not entry:
+        print("No valid definition found.")
         sys.exit(1)
+
+    # Print Headword and Part of Speech
+    headword = entry.get("hwi", {}).get("hw", word)
+    pos = entry.get("fl", "Unknown")
+    print(f"Word: {headword}")
+    print(f"Part of Speech: {pos}")
+
+    # Print first Pronunciation and Audio link (if available)
+    prs = entry.get("hwi", {}).get("prs", [])
+    if prs:
+        first_pron = prs[0].get("mw", "")
+        audio = prs[0].get("sound", {}).get("audio", "")
+        print(f"Pronunciation: {first_pron}")
+        if audio:
+            audio_url = f"https://media.merriam-webster.com/audio/prons/en/us/wav/{audio[0]}/{audio}.wav"
+            print(f"Audio: {audio_url}")
+    else:
+        print("No pronunciation available.")
+
+    # Extract definitions
+    definitions = []
+    if "def" in entry:
+        for def_block in entry["def"]:
+            sseq = def_block.get("sseq", [])
+            for group in sseq:
+                for item in group:
+                    if isinstance(item, list) and len(item) > 1:
+                        details = item[1]
+                        # Case 1: details is a dictionary with a 'dt' key
+                        if isinstance(details, dict):
+                            dt_list = details.get("dt", [])
+                            for dt in dt_list:
+                                if isinstance(dt, list) and dt[0] == "text":
+                                    definitions.append(dt[1])
+                        # Case 2: details is a list; iterate through each element
+                        elif isinstance(details, list):
+                            for det in details:
+                                if isinstance(det, dict) and "dt" in det:
+                                    dt_list = det.get("dt", [])
+                                    for dt in dt_list:
+                                        if isinstance(dt, list) and dt[0] == "text":
+                                            definitions.append(dt[1])
+    
+    if definitions:
+        print("Definitions:")
+        for i, d in enumerate(definitions, start=1):
+            print(f"{i}. {d}")
+    else:
+        print("No definitions found.")
 
 def main():
-    """Extract word from command-line arguments and fetch definition."""
     if len(sys.argv) > 1:
-        word = sys.argv[1]  # First argument after the script name
+        word = sys.argv[1]
+        get_definition(word)
     else:
-        print("❌ Error: You need to provide a word to define.")
+        print("Provide a word to define.")
         sys.exit(1)
-    
-    get_definition(word)
 
 if __name__ == "__main__":
     main()

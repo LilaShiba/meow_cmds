@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 
 import requests
-import json
 
+# Fetching Sentry data
 def fetch_sentry_data():
     url = "https://ssd-api.jpl.nasa.gov/sentry.api"
-    response = requests.get(url, stream=True)
-    
-    if response.status_code == 200:
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Will raise an exception for 4xx/5xx responses
         return response.json().get("data", [])
-    else:
-        print("Failed to retrieve data:", response.status_code)
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Error fetching Sentry data: {e}")
         return []
 
+# Get the top closest asteroids with impact probability
 def get_top_closest_asteroids(data, top_n=5):
-    min_heap = []
-    
+    asteroids = []
     for entry in data:
         try:
-            impact_probability = float(entry.get("ip", "N/A"))
+            impact_probability = float(entry.get("ip", float('-inf')))
             asteroid = {
                 "id": entry.get("id", "N/A"),
                 "designation": entry.get("des", "N/A"),
@@ -26,20 +26,19 @@ def get_top_closest_asteroids(data, top_n=5):
                 "last_observed": entry.get("last_obs", "N/A"),
                 "diameter_km": entry.get("diameter", "N/A"),
                 "velocity_km_s": entry.get("v_inf", "N/A"),
-                "impact_probability": entry.get("ip", "N/A"),
-                "number_of_impacts": entry.get("n_imp", "N/A"),
-                "hazard_scale": entry.get("ps_cum", "N/A"),
+                "impact_probability": impact_probability,
                 "risk_period": entry.get("range", "N/A")
             }
-            min_heap.append((impact_probability * -1, asteroid))
+            asteroids.append(asteroid)
         except ValueError:
-            continue
+            continue  # If we can't parse impact probability, skip this entry
     
-    min_heap.sort(key=lambda x: x[0])
-    return [asteroid for _, asteroid in min_heap[:top_n]]
+    asteroids.sort(key=lambda x: x["impact_probability"], reverse=True)
+    return asteroids[:top_n]
 
+# Printing the top closest asteroids
 def print_asteroids(asteroids):
-    print("\n🚀 Top Closest Asteroids to Earth 🪐\n")
+    print("\n🚀🌑 Top Closest Asteroids to Earth 🪐💫\n")
     for i, asteroid in enumerate(asteroids, start=1):
         print(f"{i}. 🪐 {asteroid['name']} ({asteroid['designation']})")
         print(f"   📌 ID: {asteroid['id']}")
@@ -50,10 +49,15 @@ def print_asteroids(asteroids):
         print(f"   🌍 Risk Period: {asteroid['risk_period']}")
         print("   ───────────────────────────")
 
+# Main function to fetch and display data
 def main():
+    print("🌟 Fetching the latest asteroid data from NASA... 🌟")
     data = fetch_sentry_data()
-    top_asteroids = get_top_closest_asteroids(data)
-    print_asteroids(top_asteroids)
-    
+    if data:
+        top_asteroids = get_top_closest_asteroids(data)
+        print_asteroids(top_asteroids)
+    else:
+        print("❌ No asteroid data available!")
+
 if __name__ == "__main__":
     main()

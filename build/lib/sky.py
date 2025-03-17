@@ -50,7 +50,7 @@ def fetch_nhats_data():
     
     return []
 
-def print_asteroid_observations(observations, top_n=5):
+def print_asteroid_observations(observations, top_n=10):
     """Print the latest asteroid observations in a magical format."""
     print("\n🌙✨ Latest Asteroid Observations ✨🌙\n")
     
