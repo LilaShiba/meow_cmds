@@ -20,6 +20,9 @@ def main():
         print("Running weather_process...")
         weather_process()
 
+        # TODO: add sensor data via I2C
+
+
         # Wait for 1 hour (3600 seconds) before the next cycle
         print("Waiting for the next cycle (1 hour)...")
         time.sleep(3600)  # 3600 seconds = 1 hour
