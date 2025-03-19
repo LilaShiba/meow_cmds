@@ -2,9 +2,11 @@ import time
 import datetime
 import json
 from weather import fetch_weather  # Import the fetch_weather function from your weather script
+import subprocess
+import requests
 
 # Log file where weather data will be stored
-LOG_FILE = "weather_log.json"
+LOG_FILE = "logs/weather_log.json"
 
 def get_weather_data():
     """Fetches weather data from the weather script and captures its output."""
@@ -70,3 +72,5 @@ def stop_logging():
 
 if __name__ == "__main__":
     main()  # Start the weather logging process by default
+
+
