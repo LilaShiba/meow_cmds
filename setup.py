@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='cli-tools',
     version='1.0',
-    py_modules=['weather', 'neo', 'wut', 'sky'],
+    packages=['.', 'cmds'],  # Ensure your modules are included here
     install_requires=[
         'requests',
     ],
@@ -13,7 +13,8 @@ setup(
             'neo = neo:main',
             'wut = define:main',
             'sky = sky:main',
-            'weather_log = weather_logger:main'
+            'weather_log = weather_logger:main',
+            'sensors = s_array:main'
         ],
     },
 )
