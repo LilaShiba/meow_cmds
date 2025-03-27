@@ -1,8 +1,8 @@
-from utils.neo import main as neo_process
-from utils.define import main as define_process
-from utils.net_log import main as net_log_process
-from utils.sky import main as sky_process
-from utils.weather_logger import main as weather_process
+from cmds.neo import main as neo_process
+from cmds.define import main as define_process
+from cmds.net_log import main as net_log_process
+from cmds.sky import main as sky_process
+from cmds.weather_logger import main as weather_process
 import time
 
 def main():
