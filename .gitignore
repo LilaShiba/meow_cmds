@@ -9,6 +9,7 @@ dsfile
 *.tmp
 *.bak
 *.swp
+*.csv
 
 # Ignore Python bytecode files
 __pycache__/
@@ -18,7 +19,11 @@ __pycache__/
 # Ignore virtual environment folders
 venv/
 env/
-
+data/
+historical_data/
+tmp/
+cli_tools.egg-info/
+build/
 # Ignore IDE/editor specific files
 .vscode/
 .idea/
