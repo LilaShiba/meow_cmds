@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile # Reference the default Dockerfile without a suffix
+    container_name: backend
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "5000:5000" # Expose backend port
+    restart: always
+
+networks:
+  default:
+    driver: bridge

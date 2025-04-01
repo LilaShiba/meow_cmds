@@ -15,15 +15,19 @@ dsfile
 __pycache__/
 *.pyc
 *.pyo
+*.pth
 
 # Ignore virtual environment folders
 venv/
 env/
+dev/
+tmp/
 data/
 historical_data/
 tmp/
 cli_tools.egg-info/
 build/
+ai/
 # Ignore IDE/editor specific files
 .vscode/
 .idea/
